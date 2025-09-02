@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title("Taka's yield curve graph")
+st.title("US tresury yield curve graph")
 st.write("Periods should be >1 month")
 import pandas as pd
 import numpy as np

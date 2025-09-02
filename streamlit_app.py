@@ -78,28 +78,27 @@ dfs = [onem.reset_index(), threem.reset_index(), sixm.reset_index(),
 df = pd.concat(dfs, axis = 1, join = 'outer')
 df = df.drop(df['index'], axis = 1)
 df = df.drop(df['Date'], axis = 1)
-df = df.set_index(onem['Date'])
+df = df.set_index(pd.to_datetime(onem['Date']))
 
 #Making the actual chart
 
 date_range = st.slider(
     "Select date range: ",
     min_value = onem['Date'].min().to_pydatetime(),
-    max_value = onem['Date'].min().to_pydatetime(),
+    max_value = onem['Date'].max().to_pydatetime(),
     value =(onem['Date'].min().to_pydatetime(), onem['Date'].max().to_pydatetime()),
     format = "YYYY-MM-DD")
 
-mask = (onem['Date'] >= date_range[0]) & (onem['Date'] <= date_range[1])
-filtered_dates = onem['Date'][mask]
+mask = (df.index >= date_range[0]) & (df.index <= date_range[1])
+filtered_df = df.loc[mask]
 
 
-x = df.columns
-y = df.index
-z = df.to_numpy()
+x = filtered_df.columns
+y = filtered_df.index
+z = filtered_df.to_numpy()
 
-filtered_z = z[mask,:]
 
-fig = go.Figure(data =[go.Surface(z=filtered_z, x=x, y=y)])
+fig = go.Figure(data =[go.Surface(z=z, x=x, y=y)])
 fig.update_layout(title = 'yield curves', 
                   scene = {"aspectratio": {"x":1, "y":1, "z": 0.4},
                            "xaxis": {"nticks":10}},
